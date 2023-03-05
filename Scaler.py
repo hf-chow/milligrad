@@ -31,8 +31,8 @@ class Scaler:
         output = Scaler(self.val + other.val, (self, other))
         
         def _backprop():
-            self.grad = output.grad    #Moving the next step's grad to the prev step
-            other.grad = output.grad
+            self.grad += output.grad    #Moving the next step's grad to the prev step
+            other.grad += output.grad
 
         output._backprop = _backprop    #Recurvsively calling _backprop
 
@@ -50,8 +50,8 @@ class Scaler:
         output = Scaler(self.val * other.val, (self, other))
 
         def _backprop():
-            self.grad = output.grad*other.val
-            other.grad = output.grad*self.val
+            self.grad += output.grad*other.val
+            other.grad += output.grad*self.val
 
         output._backprop = _backprop
 
@@ -71,9 +71,9 @@ class Scaler:
         
         def _backprop():
             if output.val > 0:
-                self.grad = 1 * output.grad
+                self.grad += 1 * output.grad
             else:
-                self.grad = 0 * output.grad
+                self.grad += 0 * output.grad
 
         output._backprop = _backprop
  
@@ -83,25 +83,35 @@ class Scaler:
         return Scaler(e**(self.val)/(1+e**(self.val))).val
 
     def backprop(self):
+
         self._backprop()
-        for prev in self._prev:
-            print("reach", prev)
-            prev._backprop()
-            prev.backprop()
 
+        #Topological Sort
+        visited = set() 
+        trace = []
 
-e = Scaler(-1) 
-f = Scaler(2)
-d = Scaler(4)
-b = Scaler(5)
+        visited.add(self)
 
-c = e*f
-a = c+d
-C = a*b
-L = C.relu()
+        def traverse(v):
+            for x in v._prev:
+                if x not in visited:
+                    visited.add(x)
+                    traverse(x)
+                trace.append(x)
+        traverse(self)
 
-print(L._prev)
-L.grad = 1.0
-L.backprop()
-print(f.grad)
+        trace = reversed(trace)
+
+        for i in trace:
+            i.backprop()
+        
+        """
+        Recursively calling backprop will cause some node's grad calculated
+        more than once, which would accumulate and led to incorrect grad in 
+        leaf nodes.
+        """
+        #for prev in self._prev:
+        #    print("reach", prev)
+        #    prev._backprop()
+        #    prev.backprop()
 
