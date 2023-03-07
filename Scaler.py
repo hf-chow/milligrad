@@ -66,6 +66,10 @@ class Scaler:
     def __pow__(self, other):
         return Scaler(self.val ** other.val, (self, other))
 
+    def __iadd__(self, other):
+        self.val += other.val
+        return Scaler(self.val, (self, other))
+
     def relu(self):
         output = Scaler(max(0, self.val), (self, ))
         
