@@ -7,17 +7,14 @@ class Layer:
         self.neurons = [Node(numIn) for i in range(numOut)]
 
     def forward(self, inputs):
-        output = Scaler(0)
+        scaler_inputs = []
+        for i in inputs:
+            if isinstance(i, Scaler):
+                scaler_inputs.append(i) 
+            else:
+                scaler_inputs.append(Scaler(i))
+        outputs = [] 
         for n in self.neurons:
-            output += n.forward(inputs)
-        return output
+            outputs.append(n.forward(scaler_inputs))
+        return outputs
 
-
-L = Layer(5,3)
-print(L.neurons)
-
-inputs = [Scaler(i) for i in range(5)]
-
-for i in L.neurons:
-    print(i.weights, i.bias)
-    print(L.forward(inputs))
