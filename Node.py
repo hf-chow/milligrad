@@ -14,8 +14,8 @@ class Node:
     clean that up
     """
 
-    def __init__(self, numIn):
-        self.weights = [Scaler(random.uniform(-1, 1)) for i in range(numIn)]
+    def __init__(self, in_num):
+        self.weights = [Scaler(random.uniform(-1, 1)) for i in range(in_num)]
         self.bias = Scaler(random.uniform(-1, 1))
 
     def forward(self, inputs):

@@ -2,6 +2,9 @@ from Scaler import Scaler
 from Node import Node
 from Layer import Layer
 
+from sklearn.datasets import make_blobs
+import matplotlib.pyplot as plt
+
 """
 TO DO:
     -Convert the script to a formalized structure
@@ -10,14 +13,24 @@ TO DO:
     -Implement loss function
 """
 
-inputs = range(5)
+#X, y = make_blobs(centers=2, random_state=64)
 
-layer_1 = Layer(5,3)
-layer_2 = Layer(3,2)
-layer_3 = Layer(2,1)
+class MLP:
+    
+    def __init__(self, in_num, layers_dims):
+        """
+        What we want:
+            Use two number to construct the MLP, no. of inputs, 
+            and a list of layer sizes. The input 
+        """
+        self.first_layer = Layer(in_num, layers_dims[0])
+        self.layers = [self.first_layer]+[Layer(layers_dims[i-1], layers_dims[i]) for i in range(len(layers_dims))]
 
-layer_1_out = layer_1.forward(inputs)
-layer_2_out = layer_2.forward(layer_1_out)
-layer_3_out = layer_3.forward(layer_2_out)
+model = MLP(2, [16, 16, 1])
 
-print(layer_3_out)
+print(model.layers)
+        # 3 layers: 2 -> 16 -> 16 -> 1
+        # [ [2, 16],
+        #   [16, 16],
+        #   [16, 1] ]
+# H(P,Q) = -sum x in X P(x) * log(Q(x))

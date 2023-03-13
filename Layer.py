@@ -3,8 +3,8 @@ from Node import Node
 
 class Layer:
 
-    def __init__(self, numIn, numOut):
-        self.neurons = [Node(numIn) for i in range(numOut)]
+    def __init__(self, in_num, out_num):
+        self.neurons = [Node(in_num) for i in range(out_num)]
 
     def forward(self, inputs):
         scaler_inputs = []
